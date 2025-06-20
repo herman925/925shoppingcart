@@ -1,0 +1,1054 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual Shopping Cart - Tai Po</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-top-right-controls">
+                <div class="language-toggle">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="cn">中</button>
+                    <button class="lang-btn" data-lang="id">ID</button>
+                </div>
+            </div>
+            <h1 id="app-title">Tai Po Shopping Cart System</h1>
+            
+            <div class="data-load-buttons-wrapper">
+                <div class="file-upload">
+                    <button id="load-google-sheet-btn" class="action-btn secondary-btn"><img src="icons/google-sheets.png" alt="Google Sheets Icon" class="btn-icon"> Load from Google Sheet</button>
+                    <input type="file" id="file-input" accept=".xlsx, .xls" />
+                    <label for="file-input" id="file-upload-label" class="action-btn primary-btn"><img src="icons/excel.png" alt="Excel Icon" class="btn-icon"> Load Excel Database</label>
+                </div>
+            </div>
+
+            <div class="drop-zone" id="drop-zone">
+                <div class="drop-zone-text" id="drop-zone-text"><img src="icons/excel.png" alt="Excel Icon" class="drop-zone-icon"> Drag & Drop Excel File Here</div>
+                <div class="drop-zone-subtext" id="drop-zone-subtext">or click "Load Excel Database" button above</div>
+            </div>
+
+
+
+
+        </div>
+
+        <div id="error-container"></div>
+        <div id="success-container"></div>
+
+        <div class="main-content">
+            <div class="items-section">
+                <div class="items-header-controls">
+                    <h2 class="section-title" id="items-title">Available Items</h2>
+                    <div class="search-container">
+                        <input type="text" id="search-input" class="search-input" placeholder="Search items, stores, or addresses...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    <div class="filters-container hidden-by-default" id="filters-container">
+                        <div class="filter-group">
+                            <label class="filter-label" id="category-filter-label">Category:</label>
+                            <select class="filter-select" id="category-filter" title="Filter by category">
+                                <option value="all">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" id="shop-filter-label">Shop:</label>
+                            <select class="filter-select" id="shop-filter" title="Filter by shop">
+                                <option value="all">All Shops</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="items-container">
+                    <div class="loading" id="loading-message">
+                        📋 Please load an Excel database file to see available items
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-section">
+                <h2 class="section-title" id="cart-title">Shopping Cart</h2>
+                <div class="cart-items" id="cart-items">
+                    <div class="empty-state" id="empty-cart">
+                        🛒 Your cart is empty
+                    </div>
+                </div>
+                <div class="cart-actions">
+                    <button class="action-btn primary-btn" id="save-cart">💾 Save Cart</button>
+                    <input type="file" id="load-cart-input" class="load-cart-input" accept=".json" />
+                    <label for="load-cart-input" class="action-label secondary-btn" id="load-cart">📁 Load Cart</label>
+                    <button class="action-btn primary-btn" id="print-list">🖨️ Print List</button>
+                    <button class="action-btn secondary-btn" id="clear-cart">🗑️ Clear Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Print Modal -->
+        <div id="print-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">Select Print Languages</h2>
+                    <p class="modal-subtitle" id="modal-subtitle">Choose 2 languages to display side by side</p>
+                </div>
+                <div class="language-selection">
+                    <div class="language-option">
+                        <label id="first-lang-label" for="first-language">First Language:</label>
+                        <select id="first-language">
+                            <option value="en">English</option>
+                            <option value="cn">中文</option>
+                            <option value="id">Bahasa Indonesia</option>
+                        </select>
+                    </div>
+                    <div class="language-option">
+                        <label id="second-lang-label" for="second-language">Second Language:</label>
+                        <select id="second-language">
+                            <option value="cn">中文</option>
+                            <option value="en">English</option>
+                            <option value="id">Bahasa Indonesia</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-primary" id="confirm-print">Print Now</button>
+                    <button class="modal-btn modal-btn-secondary" id="cancel-print">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Print-only content -->
+        <div class="print-only" id="print-content">
+            <h1 id="print-title">Shopping List - Tai Po</h1>
+            <div id="print-date"></div>
+            <div id="print-items"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentData = [];
+        let currentLanguage = 'en';
+                let cart = [];
+        let categories = [];
+        
+        // Language translations
+        const translations = {
+            en: {
+                appTitle: "925's Shopping Cart System",
+                fileUploadLabel: 'Load Excel Database',
+                dropZoneText: 'Drag & Drop Excel File Here',
+                dropZoneSubtext: 'or click "Load Excel Database" button above',
+                searchPlaceholder: 'Search items, stores, or addresses...',
+                itemsTitle: 'Available Items',
+                cartTitle: 'Shopping Cart',
+                emptyCart: '🛒 Your cart is empty',
+                loadingMessage: '📋 Please load a database file to see available items',
+                googleSheetLoadError: 'Failed to load data from Google Sheet. Please check the URL and sheet format.',
+                addToCart: 'Add to Cart',
+                remove: 'Remove',
+                saveCart: '💾 Save Cart',
+                loadCart: '📁 Load Cart',
+                printList: '🖨️ Print List',
+                clearCart: '🗑️ Clear Cart',
+                printTitle: 'Shopping List - Tai Po',
+                quantity: 'Qty:',
+                store: 'Store:',
+                address: 'Address:',
+                category: 'Category:',
+                cartSaved: 'Cart saved successfully!',
+                cartLoaded: 'Cart loaded successfully!',
+                cartCleared: 'Cart cleared!',
+                fileLoadError: 'Error loading file. Please check the file format.',
+                noValidData: 'No valid data found in the Excel file.',
+                alreadyInCart: 'Already in cart',
+                categoryFilterLabel: 'Category:',
+                shopFilterLabel: 'Shop:',
+                allCategories: 'All Categories',
+                allShops: 'All Shops',
+                modalTitle: 'Select Print Languages',
+                modalSubtitle: 'Choose 2 languages to display side by side',
+                firstLangLabel: 'First Language:',
+                secondLangLabel: 'Second Language:',
+                confirmPrint: 'Print Now',
+                cancelPrint: 'Cancel',
+                cartFileError: 'Error loading cart file. Please check the file format.',
+                invalidCartFile: 'Invalid cart file format.',
+                itemsLoadedSuccess: '{count} items loaded successfully!',
+                loadFromGoogleSheet: 'Load from Google Sheet'
+            },
+            cn: {
+                appTitle: "925 購物車系統",
+                fileUploadLabel: '載入 Excel 數據庫',
+                dropZoneText: '在此處拖放 Excel 文件',
+                dropZoneSubtext: '或點擊上方「載入Excel資料庫」按鈕',
+                searchPlaceholder: '搜索商品、商店或地址...',
+                itemsTitle: '可用商品',
+                cartTitle: '購物車',
+                emptyCart: '🛒 您的購物車是空的',
+                loadingMessage: '📋 請載入資料庫查看可用商品',
+                addToCart: '加入購物車',
+                remove: '移除',
+                saveCart: '💾 保存購物車',
+                loadCart: '📁 載入購物車',
+                printList: '🖨️ 打印清單',
+                clearCart: '🗑️ 清空購物車',
+                printTitle: '購物清單 - 大埔',
+                quantity: '數量:',
+                store: '商店:',
+                address: '地址:',
+                category: '類別:',
+                cartSaved: '購物車保存成功！',
+                cartLoaded: '購物車載入成功！',
+                cartCleared: '購物車已清空！',
+                fileLoadError: '載入文件錯誤。請檢查文件格式。',
+                noValidData: 'Excel 文件中未找到有效數據。',
+                alreadyInCart: '已在購物車中',
+                categoryFilterLabel: '類別:',
+                shopFilterLabel: '商店:',
+                allCategories: '所有類別',
+                allShops: '所有商店',
+                modalTitle: '選擇打印語言',
+                modalSubtitle: '選擇2種語言並排顯示',
+                firstLangLabel: '第一語言:',
+                secondLangLabel: '第二語言:',
+                confirmPrint: '打印',
+                cancelPrint: '取消',
+                cartFileError: '載入購物車文件錯誤。請檢查文件格式。',
+                invalidCartFile: '無效的購物車文件格式。',
+                itemsLoadedSuccess: '成功載入 {count} 個項目！',
+                loadFromGoogleSheet: '載入 Google Sheet 資料'
+            },
+            id: {
+                appTitle: '925 Sistem Keranjang Belanja',
+                fileUploadLabel: 'Muat Database Excel',
+                dropZoneText: 'Seret & Lepas File Excel Di Sini',
+                dropZoneSubtext: 'atau klik tombol "Muat Database Excel" di atas',
+                searchPlaceholder: 'Cari barang, toko, atau alamat...',
+                itemsTitle: 'Barang Tersedia',
+                cartTitle: 'Keranjang Belanja',
+                emptyCart: '🛒 Keranjang Anda kosong',
+                loadingMessage: '📋 Silakan muat file database untuk melihat barang yang tersedia',
+                addToCart: 'Tambah ke Keranjang',
+                remove: 'Hapus',
+                saveCart: '💾 Simpan Keranjang',
+                loadCart: '📁 Muat Keranjang',
+                printList: '🖨️ Cetak Daftar',
+                clearCart: '🗑️ Kosongkan Keranjang',
+                printTitle: 'Daftar Belanja - Tai Po',
+                quantity: 'Jumlah:',
+                store: 'Toko:',
+                address: 'Alamat:',
+                category: 'Kategori:',
+                cartSaved: 'Keranjang berhasil disimpan!',
+                cartLoaded: 'Keranjang berhasil dimuat!',
+                cartCleared: 'Keranjang dikosongkan!',
+                fileLoadError: 'Error memuat file. Silakan periksa format file.',
+                noValidData: 'Tidak ada data valid yang ditemukan dalam file Excel.',
+                alreadyInCart: 'Sudah di keranjang',
+                categoryFilterLabel: 'Kategori:',
+                shopFilterLabel: 'Toko:',
+                allCategories: 'Semua Kategori',
+                allShops: 'Semua Toko',
+                modalTitle: 'Pilih Bahasa Cetak',
+                modalSubtitle: 'Pilih 2 bahasa untuk ditampilkan berdampingan',
+                firstLangLabel: 'Bahasa Pertama:',
+                secondLangLabel: 'Bahasa Kedua:',
+                confirmPrint: 'Cetak Sekarang',
+                cancelPrint: 'Batal',
+                cartFileError: 'Error memuat file keranjang. Silakan periksa format file.',
+                invalidCartFile: 'Format file keranjang tidak valid.',
+                itemsLoadedSuccess: '{count} item berhasil dimuat!',
+                loadFromGoogleSheet: 'Muat dari Google Sheet'
+            }
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Set up event listeners
+            document.getElementById('file-input').addEventListener('change', handleFileSelect);
+            document.getElementById('search-input').addEventListener('input', handleSearch);
+            document.getElementById('save-cart').addEventListener('click', saveCart);
+            document.getElementById('load-cart-input').addEventListener('change', loadCart);
+            document.getElementById('print-list').addEventListener('click', showPrintModal);
+            document.getElementById('clear-cart').addEventListener('click', clearCart);
+
+            // Filter event listeners
+            document.getElementById('category-filter').addEventListener('change', handleFilter);
+            document.getElementById('shop-filter').addEventListener('change', handleFilter);
+
+            // Language toggle
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchLanguage(btn.dataset.lang));
+            });
+
+            // Drag and drop
+            const dropZone = document.getElementById('drop-zone');
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+            dropZone.addEventListener('drop', handleDrop);
+
+            // Modal event listeners
+            const modal = document.getElementById('print-modal');
+            const closeBtn = document.getElementsByClassName('close')[0];
+            const confirmBtn = document.getElementById('confirm-print');
+            const cancelBtn = document.getElementById('cancel-print');
+
+            closeBtn.addEventListener('click', hidePrintModal);
+            cancelBtn.addEventListener('click', hidePrintModal);
+            confirmBtn.addEventListener('click', printShoppingList);
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    hidePrintModal();
+                }
+            });
+
+            // Event listener for Google Sheet button
+            const loadGoogleSheetButton = document.getElementById('load-google-sheet-btn');
+            if (loadGoogleSheetButton) {
+                loadGoogleSheetButton.addEventListener('click', fetchAndProcessGoogleSheet);
+            } else {
+                console.error('Button with ID load-google-sheet-btn not found.'); // Diagnostic
+            }
+
+            // Update UI with current language
+            updateLanguage();
+            renderItems();
+            renderCart(); // Ensure cart is rendered on initial load
+        }
+
+                        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            updateLanguage();
+            renderItems();
+            renderCart();
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLanguage];
+
+            const elementsToUpdate = {
+                'app-title': { prop: 'textContent', key: 'appTitle' },
+
+                'drop-zone-subtext': { prop: 'textContent', key: 'dropZoneSubtext' },
+                'search-input': { prop: 'placeholder', key: 'searchPlaceholder' },
+                'items-title': { prop: 'textContent', key: 'itemsTitle' },
+                'cart-title': { prop: 'textContent', key: 'cartTitle' },
+                'loading-message': { prop: 'textContent', key: 'loadingMessage' },
+                'empty-cart': { prop: 'textContent', key: 'emptyCart' },
+                'save-cart': { prop: 'textContent', key: 'saveCart' },
+                'load-cart': { prop: 'textContent', key: 'loadCart' },
+                'print-list': { prop: 'textContent', key: 'printList' },
+                'clear-cart': { prop: 'textContent', key: 'clearCart' },
+                'category-filter-label': { prop: 'textContent', key: 'categoryFilterLabel' },
+                'shop-filter-label': { prop: 'textContent', key: 'shopFilterLabel' },
+                'modal-title': { prop: 'textContent', key: 'modalTitle' },
+                'modal-subtitle': { prop: 'textContent', key: 'modalSubtitle' },
+                'first-lang-label': { prop: 'textContent', key: 'firstLangLabel' },
+                'second-lang-label': { prop: 'textContent', key: 'secondLangLabel' },
+                'confirm-print': { prop: 'textContent', key: 'confirmPrint' },
+                'cancel-print': { prop: 'textContent', key: 'cancelPrint' }
+            };
+
+            for (const id in elementsToUpdate) {
+                const el = document.getElementById(id);
+                if (el) {
+                    const { prop, key } = elementsToUpdate[id];
+                    el[prop] = t[key];
+                }
+            }
+
+            // Handle buttons with icons separately to preserve them
+            document.getElementById('file-upload-label').innerHTML = `<img src="icons/excel.png" alt="Excel Icon" class="btn-icon"> ${t.fileUploadLabel}`;
+            document.getElementById('load-google-sheet-btn').innerHTML = `<img src="icons/google-sheets.png" alt="Google Sheets Icon" class="btn-icon"> ${t.loadFromGoogleSheet}`;
+            document.getElementById('drop-zone-text').innerHTML = `<img src="icons/excel.png" alt="Excel Icon" class="drop-zone-icon"> ${t.dropZoneText}`;
+
+            updateFilterOptions();
+        }
+
+                function updateFilterOptions() {
+            const t = translations[currentLanguage];
+            
+            // Update category filter options
+            const categoryFilter = document.getElementById('category-filter');
+            const selectedCategory = categoryFilter.value;
+            categoryFilter.innerHTML = `<option value="all">${t.allCategories}</option>`;
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+            if (Array.from(categoryFilter.options).some(opt => opt.value === selectedCategory)) {
+                categoryFilter.value = selectedCategory;
+            }
+
+            // Re-generate shop list for the current language
+            const shopSet = new Set();
+            currentData.forEach(item => {
+                const storeName = item[`store_${currentLanguage}`];
+                if (storeName && storeName.trim()) {
+                    shopSet.add(storeName.trim());
+                }
+            });
+            const currentLangShops = Array.from(shopSet).sort();
+
+            // Update shop filter options
+            const shopFilter = document.getElementById('shop-filter');
+            const selectedShopValue = shopFilter.value;
+            shopFilter.innerHTML = `<option value="all">${t.allShops}</option>`;
+            currentLangShops.forEach(shop => {
+                const option = document.createElement('option');
+                option.value = shop;
+                option.textContent = shop;
+                shopFilter.appendChild(option);
+            });
+            
+            if (Array.from(shopFilter.options).some(opt => opt.value === selectedShopValue)) {
+                shopFilter.value = selectedShopValue;
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('drop-zone').classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('drop-zone').classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('drop-zone').classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        }
+
+        function processFile(file) {
+            if (!file.name.match(/\.(xlsx|xls)$/)) {
+                showError(translations[currentLanguage].fileLoadError);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    parseAndLoadExcelContents(jsonData);
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    showError(translations[currentLanguage].fileLoadError);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+                function parseExcelData(data) {
+            if (data.length < 2) {
+                showError(translations[currentLanguage].noValidData);
+                return;
+            }
+
+            // Skip header row and process data
+            const items = [];
+            const categorySet = new Set();
+            
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                const hasEnglish = row[1] && row[5];
+                const hasChinese = row[2] && row[6];
+                const hasIndonesian = row[3] && row[7];
+                if (row && row[4] && (hasEnglish || hasChinese || hasIndonesian)) { // Check for Category and at least one complete language set
+                    const item = {
+                        toggle: row[0] || 'N',
+                        item_en: row[1] || '',
+                        item_cn: row[2] || '',
+                        item_id: row[3] || '',
+                        category: row[4] || 'Uncategorized',
+                        store_en: row[5] || '',
+                        store_cn: row[6] || '',
+                        store_id: row[7] || '',
+                        address_en: row[8] || '',
+                        address_cn: row[9] || '',
+                        address_id: row[10] || '',
+                        id: `item_${i}`
+                    };
+                    
+                    items.push(item);
+                    categorySet.add(item.category);
+                }
+            }
+
+            if (items.length === 0) {
+                showError(translations[currentLanguage].noValidData);
+                return;
+            }
+
+            currentData = items;
+            categories = Array.from(categorySet).sort();
+            
+            // Show filters and update options
+            document.getElementById('filters-container').classList.remove('hidden-by-default');
+            updateFilterOptions();
+            
+            renderItems();
+            console.log('[DEBUG] In parseExcelData - Before showSuccess:');
+            console.log('[DEBUG] currentLanguage:', currentLanguage);
+            const translationKey = 'itemsLoadedSuccess';
+            let translatedMessageTemplate = 'Error: Translation template not found';
+            if (translations[currentLanguage] && translations[currentLanguage][translationKey]) {
+                translatedMessageTemplate = translations[currentLanguage][translationKey];
+            } else {
+                console.error(`[DEBUG] Translation missing for ${currentLanguage}.${translationKey}. Falling back to English or default.`);
+                // Fallback to English if current language or key is missing
+                if (translations['en'] && translations['en'][translationKey]) {
+                    translatedMessageTemplate = translations['en'][translationKey];
+                } else {
+                     // Absolute fallback if even English is missing (should not happen for itemsLoadedSuccess)
+                    translatedMessageTemplate = `{count} items loaded (absolute fallback).`; // Ensure {count} is present
+                }
+            }
+            console.log(`[DEBUG] Template for ${currentLanguage}.${translationKey}:`, translatedMessageTemplate);
+            console.log('[DEBUG] items.length:', items.length);
+            const messageToDisplay = translatedMessageTemplate.replace('{count}', items.length);
+            console.log('[DEBUG] Final messageToDisplay:', messageToDisplay);
+            showSuccess(messageToDisplay);
+        }
+
+        function processItemData(dataRows) { // Removed hasToggleColumn
+            if (!dataRows || dataRows.length === 0) {
+                showError(translations[currentLanguage].noValidData);
+                return;
+            }
+
+            const items = [];
+            const categorySet = new Set();
+            // Columns are now fixed: Item_EN (0), Item_CN (1), Item_ID (2), Category (3), Store_EN (4), etc.
+            for (let i = 0; i < dataRows.length; i++) { // Start from 0 as header is already removed
+                const row = dataRows[i];
+                if (!row || row.length < 4) { // Minimum columns for Item_EN, Category, Store_EN
+                    console.warn('Skipping incomplete row:', row);
+                    continue;
+                }
+
+                const item_en_idx = 0;
+                const item_cn_idx = 1;
+                const item_id_idx = 2;
+                const category_idx = 3;
+                const store_en_idx = 4;
+                const store_cn_idx = 5;
+                const store_id_idx = 6;
+                const address_en_idx = 7;
+                const address_cn_idx = 8;
+                const address_id_idx = 9;
+
+                const hasEnglish = row[item_en_idx] && row[store_en_idx];
+                const hasChinese = row[item_cn_idx] && row[store_cn_idx];
+                const hasIndonesian = row[item_id_idx] && row[store_id_idx];
+
+                if (row[category_idx] && (hasEnglish || hasChinese || hasIndonesian)) {
+                    const item = {
+                        toggle: 'N', // Toggle column is no longer considered
+                        item_en: row[item_en_idx] || '',
+                        item_cn: row[item_cn_idx] || '',
+                        item_id: row[item_id_idx] || '',
+                        category: row[category_idx] || 'Uncategorized',
+                        store_en: row[store_en_idx] || '',
+                        store_cn: row[store_cn_idx] || '',
+                        store_id: row[store_id_idx] || '',
+                        address_en: row[address_en_idx] || '',
+                        address_cn: row[address_cn_idx] || '',
+                        address_id: row[address_id_idx] || '',
+                        id: `item_${currentData.length + items.length + 1}` // Ensure unique ID
+                    };
+                    items.push(item);
+                    categorySet.add(item.category);
+                }
+            }
+
+            if (items.length === 0) {
+                showError(translations[currentLanguage].noValidData);
+                return;
+            }
+
+            currentData = items;
+            categories = Array.from(categorySet).sort();
+            
+            document.getElementById('filters-container').classList.remove('hidden-by-default');
+            updateFilterOptions();
+            renderItems();
+            showSuccess(translations[currentLanguage].itemsLoadedSuccess.replace('{count}', items.length));
+        }
+
+        function parseAndLoadExcelContents(excelJsonData) {
+            if (!excelJsonData || excelJsonData.length < 2) { // Expect header + at least one data row
+                showError(translations[currentLanguage].noValidData);
+                return;
+            }
+            // Header row (excelJsonData[0]) is ignored for data processing, direct data starts from excelJsonData[1]
+            const dataRows = excelJsonData.slice(1);
+            processItemData(dataRows);
+        }
+
+        function parseCsvRow(rowString) {
+            const result = [];
+            let currentCell = '';
+            let inQuotes = false;
+            for (let i = 0; i < rowString.length; i++) {
+                const char = rowString[i];
+                if (char === '"') {
+                    if (inQuotes && i + 1 < rowString.length && rowString[i+1] === '"') {
+                        // Handle escaped quote ""
+                        currentCell += '"';
+                        i++; // Skip next quote
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(currentCell.trim());
+                    currentCell = '';
+                } else {
+                    currentCell += char;
+                }
+            }
+            result.push(currentCell.trim()); // Add the last cell
+            return result;
+        }
+
+        async function fetchAndProcessGoogleSheet() {
+            const originalGoogleSheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8RUFCnEWGIhVL49BM6J9hSXIOCAIXndRtQGGGNEPFD5LxCK0k7QoIBV4wryX6nv4tYoGqkAa3hXIZ/pub?output=csv';
+            const proxyUrl = 'https://corsproxy.io/?';
+            const googleSheetUrl = proxyUrl + encodeURIComponent(originalGoogleSheetUrl);
+            showLoadingMessage(true, 'Fetching data from Google Sheet...');
+            try {
+                const response = await fetch(googleSheetUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const csvText = await response.text();
+                
+                // Robust CSV parsing
+                const rawRows = csvText.trim().split(/\r\n|\r|\n/); // More robust line splitting
+                const rows = rawRows.map(rowString => parseCsvRow(rowString));
+
+                console.log('Parsed CSV data (first 5 rows):', rows.slice(0, 5)); // DIAGNOSTIC LOG
+
+                if (rows.length < 1) { // Should have at least header row
+                    showError(translations[currentLanguage].noValidData);
+                    return;
+                }
+
+                // Header row (rows[0]) is ignored for data processing, direct data starts from rows[1]
+                const dataRows = rows.slice(1);
+                processItemData(dataRows);
+
+            } catch (error) {
+                console.error('Error fetching or parsing Google Sheet:', error);
+                showError('Failed to load data from Google Sheet. Check console for details.');
+            } finally {
+                showLoadingMessage(false);
+            }
+        }
+
+        function showLoadingMessage(show, message = '') {
+            const loadingElement = document.getElementById('loading-message'); // Assuming you have an element for this
+            const itemsContainer = document.getElementById('items-container');
+            if (loadingElement && itemsContainer) {
+                if (show) {
+                    loadingElement.textContent = message || translations[currentLanguage].loadingMessage;
+                    loadingElement.style.display = 'block';
+                    itemsContainer.innerHTML = ''; // Clear previous items
+                } else {
+                    loadingElement.style.display = 'none';
+                }
+            }
+        }
+
+        function handleFilter() {
+            renderItems();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-container');
+            
+            if (currentData.length === 0) {
+                container.innerHTML = `<div class="loading">${translations[currentLanguage].loadingMessage}</div>`;
+                return;
+            }
+
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const selectedCategory = document.getElementById('category-filter').value;
+            const selectedShop = document.getElementById('shop-filter').value;
+            
+            const filteredItems = currentData.filter(item => {
+                const itemName = getLocalizedText(item, 'item').toLowerCase();
+                const storeName = (item[`store_${currentLanguage}`] || '').trim().toLowerCase();
+                const address = getLocalizedText(item, 'address').toLowerCase();
+                const category = item.category || 'Uncategorized';
+                
+                // Search filter
+                const matchesSearch = itemName.includes(searchTerm) || 
+                                    storeName.includes(searchTerm) || 
+                                    address.includes(searchTerm) ||
+                                    category.toLowerCase().includes(searchTerm);
+                
+                // Category filter
+                const matchesCategory = selectedCategory === 'all' || category === selectedCategory;
+                
+                // Shop filter
+                const matchesShop = selectedShop === 'all' || storeName === selectedShop.trim().toLowerCase();
+                
+                return matchesSearch && matchesCategory && matchesShop;
+            });
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<div class="empty-state">No items found</div>';
+                return;
+            }
+
+            const itemsHtml = filteredItems.map(item => {
+                                // New check for language-specific display
+                if (currentLanguage !== 'en') {
+                    const itemTextInCurrentLang = item['item_' + currentLanguage];
+                    const storeTextInCurrentLang = item['store_' + currentLanguage];
+                    // Category (item.category) is language-independent.
+                    // Address is optional for this check.
+                    // If the item name OR store name for the current non-English language is missing, don't render.
+                    if (!itemTextInCurrentLang || !storeTextInCurrentLang) {
+                        return ''; // Skip rendering this item
+                    }
+                }
+                const isInCart = cart.some(cartItem => cartItem.id === item.id);
+                const t = translations[currentLanguage];
+                
+                return `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <div class="item-details">
+                                <h3>${getLocalizedText(item, 'item')}</h3>
+                                <div class="item-meta">
+                                    <div><strong>${t.category}</strong> ${item.category || 'Uncategorized'}</div>
+                                    <div><strong>${t.store}</strong> ${getLocalizedText(item, 'store')}</div>
+                                    <div><strong>${t.address}</strong> ${getLocalizedText(item, 'address')}</div>
+                                </div>
+                            </div>
+                            <button class="add-to-cart" 
+                                    onclick="addToCart('${item.id}')" 
+                                    ${isInCart ? 'disabled' : ''}>
+                                ${isInCart ? t.alreadyInCart : t.addToCart}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="items-grid">${itemsHtml}</div>`;
+        }
+
+        function getLocalizedText(item, type) {
+            const suffix = currentLanguage === 'en' ? '_en' : 
+                          currentLanguage === 'cn' ? '_cn' : '_id';
+            return item[type + suffix] || item[type + '_en'] || '';
+        }
+
+        function handleSearch() {
+            renderItems();
+        }
+
+        function addToCart(itemId) {
+            const item = currentData.find(i => i.id === itemId);
+            if (!item) return;
+
+            const existingItem = cart.find(i => i.id === itemId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+
+            renderItems();
+            renderCart();
+        }
+
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            renderItems();
+            renderCart();
+        }
+
+        function updateQuantity(itemId, quantity) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                item.quantity = Math.max(1, parseInt(quantity) || 1);
+                renderCart();
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="empty-state">${translations[currentLanguage].emptyCart}</div>`;
+                return;
+            }
+
+            const t = translations[currentLanguage];
+            const cartHtml = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-header">
+                        <div>
+                            <h4>${getLocalizedText(item, 'item')}</h4>
+                            <div class="item-meta">
+                                <div><strong>${t.store}</strong> ${getLocalizedText(item, 'store')}</div>
+                            </div>
+                        </div>
+                        <button class="remove-item" onclick="removeFromCart('${item.id}')">
+                            ${t.remove}
+                        </button>
+                    </div>
+                    <div class="quantity-controls">
+                        <span>${t.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                        <input type="number" class="quantity-input" value="${item.quantity}" 
+                               onchange="updateQuantity('${item.id}', this.value)" min="1">
+                        <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = cartHtml;
+        }
+
+        function saveCart() {
+            try {
+                const now = new Date();
+                const dateStr = now.getFullYear().toString() + 
+                               (now.getMonth() + 1).toString().padStart(2, '0') + 
+                               now.getDate().toString().padStart(2, '0');
+                const filename = `${dateStr}_Shopping Cart.json`;
+                
+                const cartData = {
+                    date: now.toISOString(),
+                    items: cart,
+                    version: '1.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(cartData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showSuccess(translations[currentLanguage].cartSaved);
+            } catch (error) {
+                showError('Error saving cart');
+            }
+        }
+
+        function loadCart(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const cartData = JSON.parse(e.target.result);
+                    
+                    // Validate cart file format
+                    if (cartData.items && Array.isArray(cartData.items)) {
+                        cart = cartData.items;
+                        renderItems();
+                        renderCart();
+                        showSuccess(translations[currentLanguage].cartLoaded);
+                    } else {
+                        showError(translations[currentLanguage].invalidCartFile);
+                    }
+                } catch (error) {
+                    showError(translations[currentLanguage].cartFileError);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        function showPrintModal() {
+            if (cart.length === 0) {
+                showError('Cart is empty. Please add items before printing.');
+                return;
+            }
+            document.getElementById('print-modal').style.display = 'block';
+        }
+
+        function hidePrintModal() {
+            document.getElementById('print-modal').style.display = 'none';
+        }
+
+        function clearCart() {
+            cart = [];
+            renderItems();
+            renderCart();
+            showSuccess(translations[currentLanguage].cartCleared);
+        }
+
+        function printShoppingList() {
+            const firstLang = document.getElementById('first-language').value;
+            const secondLang = document.getElementById('second-language').value;
+            
+            if (firstLang === secondLang) {
+                showError('Please select two different languages');
+                return;
+            }
+
+            hidePrintModal();
+
+            // Group items by store
+            const groupedByStore = {};
+            cart.forEach(item => {
+                const storeName = getLocalizedTextForLanguage(item, 'store', firstLang);
+                const storeAddress = getLocalizedTextForLanguage(item, 'address', firstLang);
+                const key = `${storeName}|${storeAddress}`;
+                
+                if (!groupedByStore[key]) {
+                    groupedByStore[key] = {
+                        store: storeName,
+                        address: storeAddress,
+                        items: []
+                    };
+                }
+                groupedByStore[key].items.push(item);
+            });
+
+            // Prepare bilingual print content
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const year = now.getFullYear();
+            const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; // Consider localizing day names if needed
+            const dayOfWeek = daysOfWeek[now.getDay()];
+            const printDate = `${day}/${month}/${year} (${dayOfWeek})`;
+            const firstLangName = firstLang === 'en' ? 'English' : firstLang === 'cn' ? '中文' : 'Bahasa Indonesia';
+            const secondLangName = secondLang === 'en' ? 'English' : secondLang === 'cn' ? '中文' : 'Bahasa Indonesia';
+            
+            document.getElementById('print-title').textContent = 'Shopping List - Tai Po';
+            document.getElementById('print-date').innerHTML = `<strong>Date:</strong> ${printDate} | <strong>Languages:</strong> ${firstLangName} & ${secondLangName}`;
+            
+            const printItemsHtml = Object.values(groupedByStore).map(store => {
+                const storeName2 = getLocalizedTextForLanguage(store.items[0], 'store', secondLang);
+                const storeAddress2 = getLocalizedTextForLanguage(store.items[0], 'address', secondLang);
+                
+                return `
+                    <div class="store-group">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                            <div>
+                                <div class="store-header">${store.store}</div>
+                                <div class="store-address">${store.address}</div>
+                            </div>
+                            <div>
+                                <div class="store-header">${storeName2}</div>
+                                <div class="store-address">${storeAddress2}</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                ${store.items.map(item => `
+                                    <div class="print-item">
+                                        <span>${getLocalizedTextForLanguage(item, 'item', firstLang)}</span>
+                                        <span>Qty: ${item.quantity}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div>
+                                ${store.items.map(item => `
+                                    <div class="print-item">
+                                        <span>${getLocalizedTextForLanguage(item, 'item', secondLang)}</span>
+                                        <span>Qty: ${item.quantity}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('print-items').innerHTML = printItemsHtml;
+            
+            // Hide main content and show print content
+            document.querySelector('.main-content').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
+            document.getElementById('print-content').style.display = 'block';
+            
+            // Print
+            window.print();
+            
+            // Restore main content
+            setTimeout(() => {
+                document.querySelector('.main-content').style.display = 'grid';
+                document.querySelector('.header').style.display = 'block';
+                document.getElementById('print-content').style.display = 'none';
+            }, 100);
+        }
+
+        function getLocalizedTextForLanguage(item, type, lang) {
+            const suffix = lang === 'en' ? '_en' : 
+                          lang === 'cn' ? '_cn' : '_id';
+            return item[type + suffix] || item[type + '_en'] || '';
+        }
+
+        function showError(message) {
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('success-container');
+            container.innerHTML = `<div class="success-message">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 3000);
+        }
+    </script>
+</body>
+</html>

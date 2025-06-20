@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Sample Excel Database</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .generate-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .info {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info h3 {
+            margin-top: 0;
+            color: #2980b9;
+        }
+
+        .columns-list {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .columns-list h4 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        .columns-list ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .columns-list li {
+            margin-bottom: 5px;
+        }
+
+        .success-message {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏪 Generate Sample Excel Database</h1>
+        
+        <div class="info">
+            <h3>📋 About This Generator</h3>
+            <p>This tool generates a sample Excel database file (MasterDatabase.xlsx) with authentic Tai Po Hong Kong stores and typical household items that a housewife would buy. The file includes accurate English, Traditional Chinese, and Indonesian translations.</p>
+        </div>
+
+        <button class="generate-btn" onclick="generateSampleExcel()">
+            📊 Generate MasterDatabase.xlsx
+        </button>
+
+        <div class="columns-list">
+            <h4>📝 Excel File Structure (11 Columns)</h4>
+            <ol>
+                <li><strong>A - Toggle (Y/N):</strong> User's selection if item is needed</li>
+                <li><strong>B - Item_EN:</strong> Item name in English</li>
+                <li><strong>C - Item_CN:</strong> Item name in Traditional Chinese</li>
+                <li><strong>D - Item_ID:</strong> Item name in Indonesian</li>
+                <li><strong>E - Category:</strong> Item category (Food, Health, Household, etc.)</li>
+                <li><strong>F - Store_EN:</strong> Store name in English</li>
+                <li><strong>G - Store_CN:</strong> Store name in Traditional Chinese</li>
+                <li><strong>H - Store_ID:</strong> Store name in Indonesian</li>
+                <li><strong>I - Address_EN:</strong> Store address in English</li>
+                <li><strong>J - Address_CN:</strong> Store address in Traditional Chinese</li>
+                <li><strong>K - Address_ID:</strong> Store address in Indonesian</li>
+            </ol>
+        </div>
+
+        <div class="success-message" id="success-message">
+            ✅ MasterDatabase.xlsx has been generated and downloaded successfully!
+        </div>
+    </div>
+
+    <script>
+        function generateSampleExcel() {
+            // Sample data with authentic Tai Po stores and household items - TRIPLED with categories
+            const sampleData = [
+                // Header row (now with Category column)
+                ['Toggle', 'Item_EN', 'Item_CN', 'Item_ID', 'Category', 'Store_EN', 'Store_CN', 'Store_ID', 'Address_EN', 'Address_CN', 'Address_ID'],
+                
+                // PARKnSHOP items - Food & Grocery
+                ['N', 'Rice (5kg)', '米 (5公斤)', 'Beras (5kg)', 'Food & Grocery', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Fresh Milk (1L)', '新鮮牛奶 (1公升)', 'Susu Segar (1L)', 'Dairy', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'White Bread', '白麵包', 'Roti Putih', 'Bakery', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Instant Noodles', '即食麵', 'Mie Instan', 'Food & Grocery', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Cooking Oil', '食用油', 'Minyak Goreng', 'Food & Grocery', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Frozen Chicken', '急凍雞肉', 'Ayam Beku', 'Meat & Poultry', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Dish Soap', '洗潔精', 'Sabun Cuci Piring', 'Household', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Laundry Detergent', '洗衣粉', 'Deterjen Pakaian', 'Household', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Toilet Paper', '廁紙', 'Tisu Toilet', 'Household', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Kitchen Towels', '廚房紙巾', 'Tissue Dapur', 'Household', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Garbage Bags', '垃圾袋', 'Kantong Sampah', 'Household', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Soy Sauce', '生抽', 'Kecap Asin', 'Condiments', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Salt', '鹽', 'Garam', 'Condiments', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Sugar', '糖', 'Gula', 'Food & Grocery', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Eggs (12 pcs)', '雞蛋 (12隻)', 'Telur (12 butir)', 'Dairy', 'PARKnSHOP', '百佳超級市場', 'PARKnSHOP', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G01-G02號舖', 'Shop G01-G02, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+
+                // Watsons items - Health & Beauty
+                ['N', 'Shampoo', '洗髮水', 'Sampo', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Conditioner', '護髮素', 'Kondisioner', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Toothpaste', '牙膏', 'Pasta Gigi', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Toothbrush', '牙刷', 'Sikat Gigi', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Paracetamol', '撲熱息痛', 'Paracetamol', 'Medicine', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Hand Soap', '洗手液', 'Sabun Cuci Tangan', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Vitamin C', '維他命C', 'Vitamin C', 'Supplements', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Moisturizer', '潤膚霜', 'Pelembab', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Sunscreen', '防曬霜', 'Tabir Surya', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Facial Cleanser', '洗面乳', 'Pembersih Wajah', 'Health & Beauty', 'Watsons', '屈臣氏', 'Watsons', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L1/F L1-01號舖', 'Shop L1-01, L1/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+
+                // Tai Po Market (Wet Market) items - Fresh Food
+                ['N', 'Fresh Fish', '新鮮魚', 'Ikan Segar', 'Seafood', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Live Prawns', '活蝦', 'Udang Hidup', 'Seafood', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Fresh Crab', '新鮮蟹', 'Kepiting Segar', 'Seafood', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Pork Belly', '豬腩肉', 'Daging Babi Perut', 'Meat & Poultry', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Beef Brisket', '牛腩', 'Daging Sapi', 'Meat & Poultry', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Fresh Chicken', '新鮮雞', 'Ayam Segar', 'Meat & Poultry', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Bok Choy', '白菜', 'Bok Choy', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Chinese Cabbage', '大白菜', 'Sawi Putih', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Ginger', '薑', 'Jahe', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Spring Onions', '蔥', 'Daun Bawang', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Tofu', '豆腐', 'Tahu', 'Soy Products', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Bean Sprouts', '豆芽', 'Tauge', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Carrots', '紅蘿蔔', 'Wortel', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Potatoes', '薯仔', 'Kentang', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Onions', '洋蔥', 'Bawang Bombay', 'Vegetables', 'Tai Po Market', '大埔墟街市', 'Pasar Tai Po', '8 Heung Sze Wui Street, Tai Po', '大埔鄉事會街8號', '8 Heung Sze Wui Street, Tai Po'],
+
+                // Maxim's Bakery items - Bakery
+                ['N', 'Pineapple Bun', '菠蘿包', 'Roti Nanas', 'Bakery', "Maxim's Bakery", '美心西餅', "Toko Roti Maxim's", 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G18號舖', 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Egg Tart', '蛋撻', 'Egg Tart', 'Bakery', "Maxim's Bakery", '美心西餅', "Toko Roti Maxim's", 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G18號舖', 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Cake', '蛋糕', 'Kue', 'Bakery', "Maxim's Bakery", '美心西餅', "Toko Roti Maxim's", 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G18號舖', 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Cocktail Bun', '雞尾包', 'Roti Cocktail', 'Bakery', "Maxim's Bakery", '美心西餅', "Toko Roti Maxim's", 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G18號舖', 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Char Siu Bao', '叉燒包', 'Bakpao Char Siu', 'Bakery', "Maxim's Bakery", '美心西餅', "Toko Roti Maxim's", 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G18號舖', 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Red Bean Bun', '紅豆包', 'Roti Kacang Merah', 'Bakery', "Maxim's Bakery", '美心西餅', "Toko Roti Maxim's", 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城G/F G18號舖', 'Shop G18, G/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+
+                // Circle K convenience store items - Convenience
+                ['N', 'Soft Drinks', '汽水', 'Minuman Ringan', 'Beverages', 'Circle K', 'OK便利店', 'Circle K', '1 On Tai Road, Tai Po', '大埔安泰路1號', '1 On Tai Road, Tai Po'],
+                ['N', 'Potato Chips', '薯片', 'Keripik Kentang', 'Snacks', 'Circle K', 'OK便利店', 'Circle K', '1 On Tai Road, Tai Po', '大埔安泰路1號', '1 On Tai Road, Tai Po'],
+                ['N', 'Coffee', '咖啡', 'Kopi', 'Beverages', 'Circle K', 'OK便利店', 'Circle K', '1 On Tai Road, Tai Po', '大埔安泰路1號', '1 On Tai Road, Tai Po'],
+                ['N', 'Ice Cream', '雪糕', 'Es Krim', 'Frozen', 'Circle K', 'OK便利店', 'Circle K', '1 On Tai Road, Tai Po', '大埔安泰路1號', '1 On Tai Road, Tai Po'],
+                ['N', 'Energy Drink', '能量飲品', 'Minuman Berenergi', 'Beverages', 'Circle K', 'OK便利店', 'Circle K', '1 On Tai Road, Tai Po', '大埔安泰路1號', '1 On Tai Road, Tai Po'],
+                ['N', 'Chocolate Bar', '朱古力棒', 'Cokelat Batang', 'Snacks', 'Circle K', 'OK便利店', 'Circle K', '1 On Tai Road, Tai Po', '大埔安泰路1號', '1 On Tai Road, Tai Po'],
+
+                // Items with incomplete translations
+                ['N', 'English Only Item', '', '', 'Miscellaneous', 'Online Store', '', '', 'Website', '', ''],
+                ['N', '', '只有中文的項目', '', 'Miscellaneous', '', '網上商店', '', '', '網站', ''],
+                ['N', '', '', 'Barang Hanya Bahasa Indonesia', 'Miscellaneous', '', '', 'Toko Online', '', '', 'Situs web']
+
+                // ManHing Hong Grocery items - Traditional Chinese
+                ['N', 'Dried Mushrooms', '冬菇', 'Jamur Kering', 'Chinese Dried Goods', 'ManHing Hong Grocery', '萬興行雜貨店', 'Toko Kelontong ManHing Hong', '15 Tai Wo Road, Tai Po', '大埔太和路15號', '15 Tai Wo Road, Tai Po'],
+                ['N', 'Chinese Herbs', '中藥材', 'Ramuan Herbal Cina', 'Traditional Medicine', 'ManHing Hong Grocery', '萬興行雜貨店', 'Toko Kelontong ManHing Hong', '15 Tai Wo Road, Tai Po', '大埔太和路15號', '15 Tai Wo Road, Tai Po'],
+                ['N', 'Sesame Oil', '麻油', 'Minyak Wijen', 'Condiments', 'ManHing Hong Grocery', '萬興行雜貨店', 'Toko Kelontong ManHing Hong', '15 Tai Wo Road, Tai Po', '大埔太和路15號', '15 Tai Wo Road, Tai Po'],
+                ['N', 'Dried Scallops', '瑤柱', 'Kerang Kering', 'Chinese Dried Goods', 'ManHing Hong Grocery', '萬興行雜貨店', 'Toko Kelontong ManHing Hong', '15 Tai Wo Road, Tai Po', '大埔太和路15號', '15 Tai Wo Road, Tai Po'],
+                ['N', 'Bird\'s Nest', '燕窩', 'Sarang Burung', 'Traditional Medicine', 'ManHing Hong Grocery', '萬興行雜貨店', 'Toko Kelontong ManHing Hong', '15 Tai Wo Road, Tai Po', '大埔太和路15號', '15 Tai Wo Road, Tai Po'],
+                ['N', 'Wolfberries', '杞子', 'Goji Berry', 'Traditional Medicine', 'ManHing Hong Grocery', '萬興行雜貨店', 'Toko Kelontong ManHing Hong', '15 Tai Wo Road, Tai Po', '大埔太和路15號', '15 Tai Wo Road, Tai Po'],
+                ['N', 'Black Vinegar', '黑醋', 'Cuka Hitam', 'Condiments', 'ManHing Hong Grocery', '萬興行雜貨店', 'Toko Kelontong ManHing Hong', '15 Tai Wo Road, Tai Po', '大埔太和路15號', '15 Tai Wo Road, Tai Po'],
+
+                // 7-Eleven items - Convenience
+                ['N', 'Instant Soup', '即食湯', 'Sup Instan', 'Food & Grocery', '7-Eleven', '7-Eleven', '7-Eleven', 'G/F, 2-4 Tai Wing Lane, Tai Po', '大埔太榮里2-4號地下', 'G/F, 2-4 Tai Wing Lane, Tai Po'],
+                ['N', 'Bottled Water', '樽裝水', 'Air Botol', 'Beverages', '7-Eleven', '7-Eleven', '7-Eleven', 'G/F, 2-4 Tai Wing Lane, Tai Po', '大埔太榮里2-4號地下', 'G/F, 2-4 Tai Wing Lane, Tai Po'],
+                ['N', 'Sandwiches', '三明治', 'Sandwich', 'Food & Grocery', '7-Eleven', '7-Eleven', '7-Eleven', 'G/F, 2-4 Tai Wing Lane, Tai Po', '大埔太榮里2-4號地下', 'G/F, 2-4 Tai Wing Lane, Tai Po'],
+                ['N', 'Hot Dog', '熱狗', 'Hot Dog', 'Food & Grocery', '7-Eleven', '7-Eleven', '7-Eleven', 'G/F, 2-4 Tai Wing Lane, Tai Po', '大埔太榮里2-4號地下', 'G/F, 2-4 Tai Wing Lane, Tai Po'],
+                ['N', 'Instant Coffee', '即溶咖啡', 'Kopi Instan', 'Beverages', '7-Eleven', '7-Eleven', '7-Eleven', 'G/F, 2-4 Tai Wing Lane, Tai Po', '大埔太榮里2-4號地下', 'G/F, 2-4 Tai Wing Lane, Tai Po'],
+
+                // Wellcome Supermarket items - Supermarket
+                ['N', 'Cereal', '穀物早餐', 'Sereal', 'Food & Grocery', 'Wellcome', '惠康超級市場', 'Wellcome', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre', '大埔太和邨購物中心地下2-8號舖', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre'],
+                ['N', 'Yogurt', '乳酪', 'Yogurt', 'Dairy', 'Wellcome', '惠康超級市場', 'Wellcome', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre', '大埔太和邨購物中心地下2-8號舖', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre'],
+                ['N', 'Cheese', '芝士', 'Keju', 'Dairy', 'Wellcome', '惠康超級市場', 'Wellcome', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre', '大埔太和邨購物中心地下2-8號舖', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre'],
+                ['N', 'Butter', '牛油', 'Mentega', 'Dairy', 'Wellcome', '惠康超級市場', 'Wellcome', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre', '大埔太和邨購物中心地下2-8號舖', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre'],
+                ['N', 'Pasta', '意粉', 'Pasta', 'Food & Grocery', 'Wellcome', '惠康超級市場', 'Wellcome', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre', '大埔太和邨購物中心地下2-8號舖', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre'],
+                ['N', 'Tomato Sauce', '茄汁', 'Saus Tomat', 'Condiments', 'Wellcome', '惠康超級市場', 'Wellcome', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre', '大埔太和邨購物中心地下2-8號舖', 'Shop 2-8, G/F, Tai Wo Estate Shopping Centre'],
+
+                // Fresh fruit shop items - Fruits
+                ['N', 'Apples', '蘋果', 'Apel', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+                ['N', 'Oranges', '橙', 'Jeruk', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+                ['N', 'Bananas', '香蕉', 'Pisang', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+                ['N', 'Dragon Fruit', '火龍果', 'Buah Naga', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+                ['N', 'Mangoes', '芒果', 'Mangga', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+                ['N', 'Grapes', '葡萄', 'Anggur', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+                ['N', 'Watermelon', '西瓜', 'Semangka', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+                ['N', 'Pineapple', '菠蘿', 'Nanas', 'Fruits', 'Fresh Fruit Shop', '新鮮水果店', 'Toko Buah Segar', '12 Kwong Fuk Road, Tai Po', '大埔廣福道12號', '12 Kwong Fuk Road, Tai Po'],
+
+                // Guardian Pharmacy items - Medicine & Health
+                ['N', 'Band-Aids', '創可貼', 'Plester', 'Medicine', 'Guardian Pharmacy', '屈臣氏藥房', 'Guardian Pharmacy', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L2/F L2-07號舖', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Cold Medicine', '感冒藥', 'Obat Flu', 'Medicine', 'Guardian Pharmacy', '屈臣氏藥房', 'Guardian Pharmacy', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L2/F L2-07號舖', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Face Masks', '口罩', 'Masker Wajah', 'Health & Beauty', 'Guardian Pharmacy', '屈臣氏藥房', 'Guardian Pharmacy', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L2/F L2-07號舖', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Antiseptic', '消毒水', 'Antiseptik', 'Medicine', 'Guardian Pharmacy', '屈臣氏藥房', 'Guardian Pharmacy', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L2/F L2-07號舖', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+                ['N', 'Cough Syrup', '咳藥水', 'Obat Batuk', 'Medicine', 'Guardian Pharmacy', '屈臣氏藥房', 'Guardian Pharmacy', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po', '大埔南運路9號大埔超級城L2/F L2-07號舖', 'Shop L2-07, L2/F, Uptown Plaza, 9 Nam Wan Road, Tai Po'],
+
+                // Tai Po Hardware Store items - Hardware
+                ['N', 'Light Bulbs', '燈泡', 'Bohlam Lampu', 'Hardware', 'Tai Po Hardware Store', '大埔五金店', 'Toko Perangkat Keras Tai Po', '25 Plover Cove Road, Tai Po', '大埔船灣淡水湖路25號', '25 Plover Cove Road, Tai Po'],
+                ['N', 'Batteries', '電池', 'Baterai', 'Electronics', 'Tai Po Hardware Store', '大埔五金店', 'Toko Perangkat Keras Tai Po', '25 Plover Cove Road, Tai Po', '大埔船灣淡水湖路25號', '25 Plover Cove Road, Tai Po'],
+                ['N', 'Cleaning Cloth', '清潔布', 'Kain Pembersih', 'Household', 'Tai Po Hardware Store', '大埔五金店', 'Toko Perangkat Keras Tai Po', '25 Plover Cove Road, Tai Po', '大埔船灣淡水湖路25號', '25 Plover Cove Road, Tai Po'],
+                ['N', 'Screws', '螺絲', 'Sekrup', 'Hardware', 'Tai Po Hardware Store', '大埔五金店', 'Toko Perangkat Keras Tai Po', '25 Plover Cove Road, Tai Po', '大埔船灣淡水湖路25號', '25 Plover Cove Road, Tai Po'],
+                ['N', 'Wire', '電線', 'Kabel', 'Electronics', 'Tai Po Hardware Store', '大埔五金店', 'Toko Perangkat Keras Tai Po', '25 Plover Cove Road, Tai Po', '大埔船灣淡水湖路25號', '25 Plover Cove Road, Tai Po'],
+                ['N', 'Paint', '油漆', 'Cat', 'Hardware', 'Tai Po Hardware Store', '大埔五金店', 'Toko Perangkat Keras Tai Po', '25 Plover Cove Road, Tai Po', '大埔船灣淡水湖路25號', '25 Plover Cove Road, Tai Po'],
+
+                // NEW STORES - Traditional Hong Kong Shops
+
+                // Tai Po Traditional Tea Shop
+                ['N', 'Jasmine Tea', '茉莉花茶', 'Teh Melati', 'Tea & Herbs', 'Tai Po Tea House', '大埔茶莊', 'Rumah Teh Tai Po', '18 Fu Shin Street, Tai Po', '大埔富善街18號', '18 Fu Shin Street, Tai Po'],
+                ['N', 'Oolong Tea', '烏龍茶', 'Teh Oolong', 'Tea & Herbs', 'Tai Po Tea House', '大埔茶莊', 'Rumah Teh Tai Po', '18 Fu Shin Street, Tai Po', '大埔富善街18號', '18 Fu Shin Street, Tai Po'],
+                ['N', 'Pu-erh Tea', '普洱茶', 'Teh Pu-erh', 'Tea & Herbs', 'Tai Po Tea House', '大埔茶莊', 'Rumah Teh Tai Po', '18 Fu Shin Street, Tai Po', '大埔富善街18號', '18 Fu Shin Street, Tai Po'],
+                ['N', 'Ginseng', '人參', 'Ginseng', 'Traditional Medicine', 'Tai Po Tea House', '大埔茶莊', 'Rumah Teh Tai Po', '18 Fu Shin Street, Tai Po', '大埔富善街18號', '18 Fu Shin Street, Tai Po'],
+
+                // Traditional Rice Shop
+                ['N', 'Thai Jasmine Rice', '泰國香米', 'Beras Wangi Thailand', 'Food & Grocery', 'Fook Kee Rice Shop', '福記米舖', 'Toko Beras Fook Kee', '32 Market Street, Tai Po', '大埔墟市場街32號', '32 Market Street, Tai Po'],
+                ['N', 'Glutinous Rice', '糯米', 'Beras Ketan', 'Food & Grocery', 'Fook Kee Rice Shop', '福記米舖', 'Toko Beras Fook Kee', '32 Market Street, Tai Po', '大埔墟市場街32號', '32 Market Street, Tai Po'],
+                ['N', 'Brown Rice', '糙米', 'Beras Merah', 'Food & Grocery', 'Fook Kee Rice Shop', '福記米舖', 'Toko Beras Fook Kee', '32 Market Street, Tai Po', '大埔墟市場街32號', '32 Market Street, Tai Po'],
+                ['N', 'Red Beans', '紅豆', 'Kacang Merah', 'Food & Grocery', 'Fook Kee Rice Shop', '福記米舖', 'Toko Beras Fook Kee', '32 Market Street, Tai Po', '大埔墟市場街32號', '32 Market Street, Tai Po'],
+
+                // Traditional Noodle Shop
+                ['N', 'Fresh Wonton Noodles', '新鮮雲吞麵', 'Mie Wonton Segar', 'Fresh Noodles', 'Wing Kee Noodles', '榮記麵家', 'Toko Mie Wing Kee', '8 Tai Ming Lane, Tai Po', '大埔大明里8號', '8 Tai Ming Lane, Tai Po'],
+                ['N', 'Rice Noodles', '河粉', 'Kwetiau', 'Fresh Noodles', 'Wing Kee Noodles', '榮記麵家', 'Toko Mie Wing Kee', '8 Tai Ming Lane, Tai Po', '大埔大明里8號', '8 Tai Ming Lane, Tai Po'],
+                ['N', 'Egg Noodles', '蛋麵', 'Mie Telur', 'Fresh Noodles', 'Wing Kee Noodles', '榮記麵家', 'Toko Mie Wing Kee', '8 Tai Ming Lane, Tai Po', '大埔大明里8號', '8 Tai Ming Lane, Tai Po'],
+                ['N', 'Wonton Wrappers', '雲吞皮', 'Kulit Wonton', 'Fresh Noodles', 'Wing Kee Noodles', '榮記麵家', 'Toko Mie Wing Kee', '8 Tai Ming Lane, Tai Po', '大埔大明里8號', '8 Tai Ming Lane, Tai Po'],
+
+                // Traditional Soy Sauce Shop
+                ['N', 'Premium Dark Soy', '老抽王', 'Kecap Kental Premium', 'Condiments', 'Lam Kee Soy Sauce', '林記豉油', 'Toko Kecap Lam Kee', '45 On Chee Road, Tai Po', '大埔安祉路45號', '45 On Chee Road, Tai Po'],
+                ['N', 'Light Soy Sauce', '生抽', 'Kecap Asin Muda', 'Condiments', 'Lam Kee Soy Sauce', '林記豉油', 'Toko Kecap Lam Kee', '45 On Chee Road, Tai Po', '大埔安祉路45號', '45 On Chee Road, Tai Po'],
+                ['N', 'Fish Sauce', '魚露', 'Kecap Ikan', 'Condiments', 'Lam Kee Soy Sauce', '林記豉油', 'Toko Kecap Lam Kee', '45 On Chee Road, Tai Po', '大埔安祉路45號', '45 On Chee Road, Tai Po'],
+                ['N', 'Oyster Sauce', '蠔油', 'Saus Tiram', 'Condiments', 'Lam Kee Soy Sauce', '林記豉油', 'Toko Kecap Lam Kee', '45 On Chee Road, Tai Po', '大埔安祉路45號', '45 On Chee Road, Tai Po'],
+
+                // Traditional Dried Seafood Shop
+                ['N', 'Dried Abalone', '鮑魚乾', 'Abalon Kering', 'Chinese Dried Goods', 'Sun Kee Dried Seafood', '新記海味', 'Toko Seafood Kering Sun Kee', '22 Kwong Fuk Road, Tai Po', '大埔廣福道22號', '22 Kwong Fuk Road, Tai Po'],
+                ['N', 'Shark Fin', '魚翅', 'Sirip Hiu', 'Chinese Dried Goods', 'Sun Kee Dried Seafood', '新記海味', 'Toko Seafood Kering Sun Kee', '22 Kwong Fuk Road, Tai Po', '大埔廣福道22號', '22 Kwong Fuk Road, Tai Po'],
+                ['N', 'Sea Cucumber', '海參', 'Teripang', 'Chinese Dried Goods', 'Sun Kee Dried Seafood', '新記海味', 'Toko Seafood Kering Sun Kee', '22 Kwong Fuk Road, Tai Po', '大埔廣福道22號', '22 Kwong Fuk Road, Tai Po'],
+                ['N', 'Dried Shrimp', '蝦米', 'Udang Kering', 'Chinese Dried Goods', 'Sun Kee Dried Seafood', '新記海味', 'Toko Seafood Kering Sun Kee', '22 Kwong Fuk Road, Tai Po', '大埔廣福道22號', '22 Kwong Fuk Road, Tai Po'],
+
+                // Traditional Tofu Shop
+                ['N', 'Silken Tofu', '嫩豆腐', 'Tahu Sutra', 'Soy Products', 'Ho Kee Tofu', '何記豆腐', 'Toko Tahu Ho Kee', '15 Ting Kok Road, Tai Po', '大埔汀角路15號', '15 Ting Kok Road, Tai Po'],
+                ['N', 'Firm Tofu', '硬豆腐', 'Tahu Keras', 'Soy Products', 'Ho Kee Tofu', '何記豆腐', 'Toko Tahu Ho Kee', '15 Ting Kok Road, Tai Po', '大埔汀角路15號', '15 Ting Kok Road, Tai Po'],
+                ['N', 'Soy Milk', '豆漿', 'Susu Kedelai', 'Beverages', 'Ho Kee Tofu', '何記豆腐', 'Toko Tahu Ho Kee', '15 Ting Kok Road, Tai Po', '大埔汀角路15號', '15 Ting Kok Road, Tai Po'],
+                ['N', 'Tofu Pudding', '豆腐花', 'Puding Tahu', 'Desserts', 'Ho Kee Tofu', '何記豆腐', 'Toko Tahu Ho Kee', '15 Ting Kok Road, Tai Po', '大埔汀角路15號', '15 Ting Kok Road, Tai Po'],
+
+                // Local Fish Ball Shop
+                ['N', 'Fresh Fish Balls', '新鮮魚蛋', 'Bakso Ikan Segar', 'Processed Food', 'Tai Po Fish Ball King', '大埔魚蛋王', 'Raja Bakso Ikan Tai Po', '28 Heung Sze Wui Street, Tai Po', '大埔鄉事會街28號', '28 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Beef Balls', '牛丸', 'Bakso Sapi', 'Processed Food', 'Tai Po Fish Ball King', '大埔魚蛋王', 'Raja Bakso Ikan Tai Po', '28 Heung Sze Wui Street, Tai Po', '大埔鄉事會街28號', '28 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Pork Balls', '豬肉丸', 'Bakso Babi', 'Processed Food', 'Tai Po Fish Ball King', '大埔魚蛋王', 'Raja Bakso Ikan Tai Po', '28 Heung Sze Wui Street, Tai Po', '大埔鄉事會街28號', '28 Heung Sze Wui Street, Tai Po'],
+                ['N', 'Fish Cake', '魚餅', 'Kue Ikan', 'Processed Food', 'Tai Po Fish Ball King', '大埔魚蛋王', 'Raja Bakso Ikan Tai Po', '28 Heung Sze Wui Street, Tai Po', '大埔鄉事會街28號', '28 Heung Sze Wui Street, Tai Po'],
+
+                // Traditional Herbal Shop
+                ['N', 'Cordyceps', '冬蟲夏草', 'Cordyceps', 'Traditional Medicine', 'Yuen Kee Herbs', '源記藥材', 'Toko Herbal Yuen Kee', '38 Tai Po Market Street, Tai Po', '大埔墟市場街38號', '38 Tai Po Market Street, Tai Po'],
+                ['N', 'American Ginseng', '花旗參', 'Ginseng Amerika', 'Traditional Medicine', 'Yuen Kee Herbs', '源記藥材', 'Toko Herbal Yuen Kee', '38 Tai Po Market Street, Tai Po', '大埔墟市場街38號', '38 Tai Po Market Street, Tai Po'],
+                ['N', 'Lingzhi Mushroom', '靈芝', 'Jamur Lingzhi', 'Traditional Medicine', 'Yuen Kee Herbs', '源記藥材', 'Toko Herbal Yuen Kee', '38 Tai Po Market Street, Tai Po', '大埔墟市場街38號', '38 Tai Po Market Street, Tai Po'],
+                ['N', 'Deer Antler', '鹿茸', 'Tanduk Rusa', 'Traditional Medicine', 'Yuen Kee Herbs', '源記藥材', 'Toko Herbal Yuen Kee', '38 Tai Po Market Street, Tai Po', '大埔墟市場街38號', '38 Tai Po Market Street, Tai Po']
+            ];
+
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(sampleData);
+
+            // Set column widths for better readability
+            const colWidths = [
+                { wch: 8 },   // Toggle
+                { wch: 20 },  // Item_EN
+                { wch: 15 },  // Item_CN
+                { wch: 20 },  // Item_ID
+                { wch: 18 },  // Category
+                { wch: 20 },  // Store_EN
+                { wch: 15 },  // Store_CN
+                { wch: 25 },  // Store_ID
+                { wch: 50 },  // Address_EN
+                { wch: 30 },  // Address_CN
+                { wch: 50 }   // Address_ID
+            ];
+            ws['!cols'] = colWidths;
+
+            // Add the worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'MasterDatabase');
+
+            // Generate and download the file
+            XLSX.writeFile(wb, 'MasterDatabase.xlsx');
+
+            // Show success message
+            document.getElementById('success-message').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('success-message').style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
