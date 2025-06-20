@@ -22,6 +22,7 @@
             
             <div class="data-load-buttons-wrapper">
                 <div class="file-upload">
+                    <button id="edit-google-sheet-btn" class="action-btn secondary-btn"><img src="icons/google-sheets.png" alt="Google Sheets Icon" class="btn-icon"> Edit Google Sheet</button>
                     <button id="load-google-sheet-btn" class="action-btn secondary-btn"><img src="icons/google-sheets.png" alt="Google Sheets Icon" class="btn-icon"> Load from Google Sheet</button>
                     <input type="file" id="file-input" accept=".xlsx, .xls" />
                     <label for="file-input" id="file-upload-label" class="action-btn primary-btn"><img src="icons/excel.png" alt="Excel Icon" class="btn-icon"> Load Excel Database</label>
@@ -129,6 +130,8 @@
         </div>
     </div>
 
+
+
     <script>
         // Global variables
         let currentData = [];
@@ -179,7 +182,8 @@
                 cartFileError: 'Error loading cart file. Please check the file format.',
                 invalidCartFile: 'Invalid cart file format.',
                 itemsLoadedSuccess: '{count} items loaded successfully!',
-                loadFromGoogleSheet: 'Load from Google Sheet'
+                loadFromGoogleSheet: 'Load from Google Sheet',
+                editGoogleSheet: 'Edit Google Sheet'
             },
             cn: {
                 appTitle: "925 購物車系統",
@@ -221,7 +225,8 @@
                 cartFileError: '載入購物車文件錯誤。請檢查文件格式。',
                 invalidCartFile: '無效的購物車文件格式。',
                 itemsLoadedSuccess: '成功載入 {count} 個項目！',
-                loadFromGoogleSheet: '載入 Google Sheet 資料'
+                loadFromGoogleSheet: '載入 Google Sheet 資料',
+                editGoogleSheet: '編輯 Google Sheet'
             },
             id: {
                 appTitle: '925 Sistem Keranjang Belanja',
@@ -263,7 +268,8 @@
                 cartFileError: 'Error memuat file keranjang. Silakan periksa format file.',
                 invalidCartFile: 'Format file keranjang tidak valid.',
                 itemsLoadedSuccess: '{count} item berhasil dimuat!',
-                loadFromGoogleSheet: 'Muat dari Google Sheet'
+                loadFromGoogleSheet: 'Muat dari Google Sheet',
+                editGoogleSheet: 'Edit Google Sheet'
             }
         };
 
@@ -313,13 +319,9 @@
                 }
             });
 
-            // Event listener for Google Sheet button
-            const loadGoogleSheetButton = document.getElementById('load-google-sheet-btn');
-            if (loadGoogleSheetButton) {
-                loadGoogleSheetButton.addEventListener('click', fetchAndProcessGoogleSheet);
-            } else {
-                console.error('Button with ID load-google-sheet-btn not found.'); // Diagnostic
-            }
+            // Event listener for Google Sheet buttons
+            document.getElementById('load-google-sheet-btn').addEventListener('click', fetchAndProcessGoogleSheet);
+            document.getElementById('edit-google-sheet-btn').addEventListener('click', openSheetInNewTab);
 
             // Update UI with current language
             updateLanguage();
@@ -377,6 +379,7 @@
             // Handle buttons with icons separately to preserve them
             document.getElementById('file-upload-label').innerHTML = `<img src="icons/excel.png" alt="Excel Icon" class="btn-icon"> ${t.fileUploadLabel}`;
             document.getElementById('load-google-sheet-btn').innerHTML = `<img src="icons/google-sheets.png" alt="Google Sheets Icon" class="btn-icon"> ${t.loadFromGoogleSheet}`;
+            document.getElementById('edit-google-sheet-btn').innerHTML = `<img src="icons/google-sheets.png" alt="Google Sheets Icon" class="btn-icon"> ${t.editGoogleSheet}`;
             document.getElementById('drop-zone-text').innerHTML = `<img src="icons/excel.png" alt="Excel Icon" class="drop-zone-icon"> ${t.dropZoneText}`;
 
             updateFilterOptions();
@@ -437,12 +440,12 @@
             document.getElementById('drop-zone').classList.remove('dragover');
         }
 
-        function handleDrop(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        function handleDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
             document.getElementById('drop-zone').classList.remove('dragover');
             
-            const files = e.dataTransfer.files;
+            const files = event.dataTransfer.files;
             if (files.length > 0) {
                 processFile(files[0]);
             }
@@ -925,6 +928,11 @@
 
         function hidePrintModal() {
             document.getElementById('print-modal').style.display = 'none';
+        }
+
+        function openSheetInNewTab() {
+            const sheetUrl = 'https://docs.google.com/spreadsheets/d/1NUgeV3oNtiFK373cXf8BwfdxdhYEathzZ2mr6rImDqY/edit?usp=sharing';
+            window.open(sheetUrl, '_blank');
         }
 
         function clearCart() {

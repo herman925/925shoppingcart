@@ -1,6 +1,6 @@
 # 🏪 925's Shopping Cart System
 
-This is a multilingual shopping cart application. It is a static HTML file. It was made by Herman925. It helps you manage shopping lists. It supports English, Chinese, and Indonesian.
+This static HTML shopping cart application, created by Herman925, helps you manage shopping lists across multiple languages, including English, Traditional Chinese, and Indonesian.
 
 ## 🚀 Quick Start
 
@@ -11,14 +11,14 @@ This is a multilingual shopping cart application. It is a static HTML file. It w
 4.  Load the downloaded Excel file using the "Load Excel Database" button or by dragging and dropping the file onto the designated area.
 
 ### Option 2: Use Your Own Excel Data
-1.  Create an Excel file with the required 11-column structure (see below).
+1.  Create an Excel file with the required 10-column structure (see below).
 2.  Open `index.html` in your web browser.
 3.  Load your Excel file.
 
-### Option 3: Load from Google Sheets
+### Option 3: Load or Edit from Google Sheets
 1. Open `index.html`.
-2. Click the "Load from Google Sheet" button.
-3. Enter the URL of your public Google Sheet when prompted. The sheet must follow the 11-column structure.
+2. **To Edit:** Click the "Edit Google Sheet" button to open the master database in a new tab for live editing.
+3. **To Load:** Click the "Load from Google Sheet" button and enter the URL of your public Google Sheet when prompted. The sheet must follow the 10-column structure.
 
 ## 📊 Excel File & Google Sheet Structure
 
@@ -69,6 +69,7 @@ Your data source must have exactly 10 columns in this order:
 -   **Excel File Upload**: Load data from `.xlsx` or `.xls` files using a file picker.
 -   **Drag & Drop**: Easily drag and drop your Excel file into the application.
 -   **Google Sheets Integration**: Load your shopping database directly from a public Google Sheet.
+-   **Live Google Sheet Editing**: Click the "Edit Google Sheet" button to open the database in a new tab for real-time edits before loading the data.
 -   **Error Handling**: The system provides feedback for invalid file formats or data structures.
 
 ### 📱 Responsive Design
