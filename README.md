@@ -1,103 +1,105 @@
+# 🏪 925's Shopping Cart System
 
-# 🏪 Multilingual Shopping Cart System - Tai Po
-
-A complete static HTML application for multilingual shopping cart management designed for Tai Po, Hong Kong residents. This system supports English, Traditional Chinese, and Indonesian languages.
+This is a multilingual shopping cart application. It is a static HTML file. It was made by Herman925. It helps you manage shopping lists. It supports English, Chinese, and Indonesian.
 
 ## 🚀 Quick Start
 
 ### Option 1: Use Pre-generated Sample Data
-1. Open `sample-excel-generator.html` in your web browser
-2. Click "Generate MasterDatabase.xlsx" to download the sample database
-3. Open `shopping-cart.html` in your web browser
-4. Load the downloaded Excel file using the file upload or drag & drop
+1.  Open `sample-excel-generator.html` in your web browser.
+2.  Click "Generate MasterDatabase.xlsx" to download the sample database.
+3.  Open `shopping-cart.html` in your web browser.
+4.  Load the downloaded Excel file using the "Load Excel Database" button or by dragging and dropping the file onto the designated area.
 
 ### Option 2: Use Your Own Excel Data
-1. Create an Excel file with the required 10-column structure (see below)
-2. Open `shopping-cart.html` in your web browser
-3. Load your Excel file using the file upload or drag & drop
+1.  Create an Excel file with the required 11-column structure (see below).
+2.  Open `shopping-cart.html` in your web browser.
+3.  Load your Excel file.
 
-## 📊 Excel File Structure
+### Option 3: Load from Google Sheets
+1. Open `shopping-cart.html`.
+2. Click the "Load from Google Sheet" button.
+3. Enter the URL of your public Google Sheet when prompted. The sheet must follow the 11-column structure.
 
-Your Excel file must have exactly 10 columns in this order:
+## 📊 Excel File & Google Sheet Structure
 
-| Column | Name | Description |
-|--------|------|-------------|
-| A | Toggle | Y/N - User's selection if item is needed |
-| B | Item_EN | Item name in English |
-| C | Item_CN | Item name in Traditional Chinese |
-| D | Item_ID | Item name in Indonesian |
-| E | Store_EN | Store name in English |
-| F | Store_CN | Store name in Traditional Chinese |
-| G | Store_ID | Store name in Indonesian |
-| H | Address_EN | Store address in English |
-| I | Address_CN | Store address in Traditional Chinese |
-| J | Address_ID | Store address in Indonesian |
+Your data source must have exactly 10 columns in this order:
+
+| Column | Name         | Description                               |
+|--------|--------------|-------------------------------------------|
+| A      | Item_EN      | Item name in English                      |
+| B      | Item_CN      | Item name in Traditional Chinese          |
+| C      | Item_ID      | Item name in Indonesian                   |
+| D      | Category     | The category of the item (e.g., "Food & Grocery", "Household") |
+| E      | Store_EN     | Store name in English                     |
+| F      | Store_CN     | Store name in Traditional Chinese         |
+| G      | Store_ID     | Store name in Indonesian                  |
+| H      | Address_EN   | Store address in English                  |
+| I      | Address_CN   | Store address in Traditional Chinese      |
+| J      | Address_ID   | Store address in Indonesian               |
 
 ## ✨ Features
 
 ### 🌍 Multilingual Support
-- **English**: Full interface and data display
-- **Traditional Chinese (中文)**: Complete Chinese localization
-- **Indonesian (Bahasa)**: Full Indonesian translation
+-   **English**: Full interface and data display.
+-   **Traditional Chinese (中文)**: Complete Chinese localization.
+-   **Indonesian (Bahasa Indonesia)**: Full Indonesian translation.
 
 ### 🛒 Shopping Cart Management
-- Add items to cart with quantity controls
-- Edit quantities using +/- buttons or direct input
-- Remove individual items from cart
-- View cart summary with store grouping
+-   Add items to the cart with quantity controls.
+-   Edit quantities using +/- buttons or by direct input.
+-   Remove individual items from the cart.
+-   View a clear cart summary with items grouped by store.
+-   Clear the entire cart with a single click.
 
 ### 🔍 Search & Filter
-- Real-time search across item names, store names, and addresses
-- Instant filtering as you type
-- Search works in all three languages
+-   **Real-time Search**: Instantly search across item names, store names, and addresses in any of the supported languages.
+-   **Category & Shop Filtering**: Filter the item list by specific categories or shops to quickly find what you need.
 
 ### 💾 Data Persistence
-- Auto-save cart to browser's local storage
-- Manual save/load cart functionality
-- Cart data persists between browser sessions
+-   **Auto-save**: The cart is automatically saved to the browser's local storage.
+-   **Manual Save/Load**: Manually save your current cart to a file and load it back later.
+-   **Session Persistence**: Your cart data persists even after closing the browser.
 
 ### 🖨️ Print-Ready Shopping Lists
-- Generate organized shopping lists grouped by store
-- Include store addresses for easy navigation
-- Print-optimized layout with clean formatting
+-   **Bilingual Printing**: Select any two languages to display side-by-side on your printed list.
+-   **Organized Layout**: Generates a clean, print-optimized shopping list with items grouped by store.
+-   **Store Addresses Included**: The list includes store addresses for easy navigation.
+
+### 📁 Flexible Data Loading
+-   **Excel File Upload**: Load data from `.xlsx` or `.xls` files using a file picker.
+-   **Drag & Drop**: Easily drag and drop your Excel file into the application.
+-   **Google Sheets Integration**: Load your shopping database directly from a public Google Sheet.
+-   **Error Handling**: The system provides feedback for invalid file formats or data structures.
 
 ### 📱 Responsive Design
-- Mobile-friendly interface
-- Works on tablets and desktop computers
-- Touch-friendly controls for mobile devices
-
-### 📁 File Handling
-- Excel file upload via file picker
-- Drag & drop Excel file support
-- Error handling for invalid file formats
-- Support for .xlsx and .xls formats
+-   The application has a responsive interface. It is mobile-friendly and works on desktops, tablets, and smartphones.
 
 ## 🏪 Sample Stores & Items
 
-The sample database includes authentic Tai Po, Hong Kong locations:
+The sample database includes items from authentic locations in Tai Po, Hong Kong:
 
 ### Supermarkets
-- **PARKnSHOP (百佳超級市場)** - Uptown Plaza
-- **Wellcome (惠康超級市場)** - Tai Wo Estate
+-   **PARKnSHOP (百佳超級市場)** - Uptown Plaza
+-   **Wellcome (惠康超級市場)** - Tai Wo Estate
 
 ### Pharmacies
-- **Watsons (屈臣氏)** - Uptown Plaza
-- **Guardian Pharmacy (屈臣氏藥房)** - Uptown Plaza
+-   **Watsons (屈臣氏)** - Uptown Plaza
+-   **Guardian Pharmacy (屈臣氏藥房)** - Uptown Plaza
 
 ### Markets & Specialty Stores
-- **Tai Po Market (大埔墟街市)** - Traditional wet market
-- **Fresh Fruit Shop (新鮮水果店)** - Kwong Fuk Road
-- **ManHing Hong Grocery (萬興行雜貨店)** - Traditional grocery
+-   **Tai Po Market (大埔墟街市)** - Traditional wet market
+-   **Fresh Fruit Shop (新鮮水果店)** - Kwong Fuk Road
+-   **ManHing Hong Grocery (萬興行雜貨店)** - Traditional grocery
 
 ### Convenience Stores
-- **7-Eleven** - Tai Wing Lane
-- **Circle K (OK便利店)** - On Tai Road
+-   **7-Eleven** - Tai Wing Lane
+-   **Circle K (OK便利店)** - On Tai Road
 
 ### Bakeries
-- **Maxim's Bakery (美心西餅)** - Uptown Plaza
+-   **Maxim's Bakery (美心西餅)** - Uptown Plaza
 
 ### Hardware
-- **Tai Po Hardware Store (大埔五金店)** - Plover Cove Road
+-   **Tai Po Hardware Store (大埔五金店)** - Plover Cove Road
 
 ## 🛠️ Technical Requirements
 
@@ -167,7 +169,7 @@ shopping-cart-app/
 **Excel file won't load?**
 - Check that your file has exactly 10 columns
 - Ensure the file is in .xlsx or .xls format
-- Verify that column B (Item_EN) has data in all rows
+- Verify that column A (Item_EN) has data in all rows
 
 **Cart not saving?**
 - Check that your browser allows local storage
@@ -183,6 +185,6 @@ shopping-cart-app/
 
 ## 🌟 Why This System?
 
-This shopping cart system was specifically designed for the multilingual community in Tai Po, Hong Kong, where residents often speak Cantonese, English, and various Southeast Asian languages. The system bridges language barriers while providing practical functionality for everyday shopping needs.
+This system is for the multilingual community in Tai Po, Hong Kong. People there speak many languages. This app helps them shop by bridging language barriers.
 
 **Made with ❤️ for the Tai Po community**
