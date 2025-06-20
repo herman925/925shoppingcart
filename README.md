@@ -7,16 +7,16 @@ This is a multilingual shopping cart application. It is a static HTML file. It w
 ### Option 1: Use Pre-generated Sample Data
 1.  Open `sample-excel-generator.html` in your web browser.
 2.  Click "Generate MasterDatabase.xlsx" to download the sample database.
-3.  Open `shopping-cart.html` in your web browser.
+3.  Open `index.html` in your web browser.
 4.  Load the downloaded Excel file using the "Load Excel Database" button or by dragging and dropping the file onto the designated area.
 
 ### Option 2: Use Your Own Excel Data
 1.  Create an Excel file with the required 11-column structure (see below).
-2.  Open `shopping-cart.html` in your web browser.
+2.  Open `index.html` in your web browser.
 3.  Load your Excel file.
 
 ### Option 3: Load from Google Sheets
-1. Open `shopping-cart.html`.
+1. Open `index.html`.
 2. Click the "Load from Google Sheet" button.
 3. Enter the URL of your public Google Sheet when prompted. The sheet must follow the 11-column structure.
 
@@ -159,7 +159,7 @@ To add your own stores and items:
 
 ```
 shopping-cart-app/
-├── shopping-cart.html          # Main application
+├── index.html          # Main application
 ├── sample-excel-generator.html # Sample data generator
 └── README.md                   # This documentation
 ```
